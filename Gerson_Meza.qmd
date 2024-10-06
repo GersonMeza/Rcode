@@ -1,0 +1,104 @@
+---
+title: "Diseño"
+author: "GersonMeza"
+format: html
+editor: visual
+---
+
+```{r}
+#diseños experimentales
+##DCA
+#Dosis de fertilizacion nitrogenada:
+-0
+-50
+-100
+-150
+#Rep:5
+
+
+library(agricolae)
+dosis <- c(0, 50, 100, 150)
+rep <- 5
+dca <- design.crd(trt = dosis, r = rep, seed = 123)
+print(dca$book)
+library(ggplot2)
+dca_df <- as.data.frame(dca$book)
+```
+
+```{r}
+##DBCA 
+##Factorial variedades de papa: canchan y peruanita
+trt <- c(4, 2)
+outdesign <- design.ab(trt, r = 5, serie = 2)
+book <- outdesign$book
+book
+library(ggplot2)
+book_df <- as.data.frame(book)
+colnames(book_df) <- c("Parcela", "Bloque", "Dosis", "Variedad")
+ggplot(book_df, aes(x = as.factor(Bloque), y = interaction(Dosis, Variedad))) +
+  geom_point() +
+  labs(x = "Bloques", y = "Tratamientos (Dosis x Variedad)", title = "Diseño Factorial en Bloques Aleatorizados (4x2 con 5 Bloques)") +
+  theme_minimal()
+```
+
+mc
+
+```{r}
+##install.packages("readxl")
+library(readxl) 
+FB <- read_excel("D:/Doctorado/CicloI/Estadistica/Guerrero Abad/R/r_work/LA MOLINA 2014 POTATO WUE (FB).xlsx", sheet = "fb")
+View(FB)
+
+str(FB)
+
+##modelo estadistico
+
+modelo <- aov(lfa ~ riego + geno + riego*geno + bloque, data = FB)
+anova(modelo)
+
+plot(modelo)
+
+##comparacion de medias
+library(agricolae)
+
+mc <- agricolae::duncan.test(y=modelo, trt = c("riego", "geno"))
+
+mc
+
+##comparacion de medias
+##install.packages("emmeans")
+##install.packages("multcomp")
+##install.packages("tidyverse")
+library(tidyverse)
+library(emmeans)
+library(multcomp)
+
+mc <- emmeans(modelo, ~ riego | geno) %>%
+  data.frame()
+mc  
+  
+##cld(Letters = letters, reversed = T)
+
+
+
+
+
+##graficas
+##install.packages("inti")
+##install.packages("shiny")
+library(inti)
+
+##Cargando paquete requerido: shiny
+plot_smr(data = mc
+         , type = "bar"
+         , x = "geno"
+         , y = "emmean"
+         , group = "riego"
+         , sig = NULL
+         , error = "SE"
+         , ylimits = c(0, 12000, 2000)
+         )
+
+
+
+```

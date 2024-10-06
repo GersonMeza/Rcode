@@ -1,0 +1,33 @@
+---
+title: "proye"
+author: "ger"
+format: html
+editor: visual
+---
+
+## gggg
+
+```{r}
+library(rmarkdown)
+
+# Instalar el paquete si no está instalado
+#install.packages("agricolae")
+
+
+# Cargar el paquete
+library(agricolae)
+
+# Definir los tratamientos
+tratamientos <- c(0, 50, 100, 150)
+
+# Número de repeticiones
+repeticiones <- 5
+
+# Crear el diseño completamente al azar (DCA)
+dca <- design.crd(trt = tratamientos, r = repeticiones, seed = 123)
+
+# Mostrar el diseño generado
+dca$book
+
+print(dca)
+```
